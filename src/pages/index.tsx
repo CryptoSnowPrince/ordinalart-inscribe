@@ -27,8 +27,8 @@ export default function Home() {
             alt="Background Circle"
           />
         </div>
+        <Inscribe />
       </main>
-      {/* <Inscribe /> */}
     </>
   )
 }

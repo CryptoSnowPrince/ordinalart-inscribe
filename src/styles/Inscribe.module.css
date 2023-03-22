@@ -50,7 +50,7 @@
   padding: 1rem 1.2rem;
   border-radius: var(--border-radius);
   background: rgba(var(--card-rgb), 0);
-  border: 1px solid rgba(var(--card-border-rgb), 0);
+  border: 2px solid rgba(var(--card-border-rgb), 1);
 }
 
 .card span {
@@ -68,7 +68,7 @@
   opacity: 0.6;
   font-size: 0.9rem;
   line-height: 1.5;
-  max-width: 30ch;
+  max-width: 50ch;
 }
 
 .center {
@@ -150,6 +150,20 @@
   background-clip: content-box;
 }
 
+.inscribebuttons {
+  display: flex;
+  justify-content: center;
+}
+
+.inscribebuttons .inscribebutton {
+  width: 50%;
+}
+
+.inscribebuttons .inscribebutton .button {
+  display: flex;
+  justify-content: center;
+}
+
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
@@ -185,12 +199,17 @@
     text-align: center;
   }
 
-  .card {
-    padding: 1rem 2.5rem;
-  }
-
   .card h2 {
     margin-bottom: 0.5rem;
+  }
+
+  .inscribebuttons {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .inscribebuttons .inscribebutton {
+    width: 100%;
   }
 
   .center {
