@@ -75,6 +75,8 @@
   --tg-fw-medium: 500;
   --tg-fw-regular: 400;
   --tg-fw-light: 300;
+  --bs-product-card-bg: #fff !important;
+  --bs-product-card-border: #edf1f5 !important;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -11,6 +11,8 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Inscribe() {
     const [file, setFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState<string | null | undefined>(null);
+    const [files, setFiles] = useState<any[]>([]);
+    const [previewUrls, setPreviewUrls] = useState<(string | undefined)[]>([]);
     const [pendingInscribe, setPendingInscribe] = useState(false);
     const [pendingEstimate, setPendingEstimate] = useState(false);
     const [estimateFeeSats, setEstimateFeeSats] = useState(0);
@@ -90,25 +92,67 @@ export default function Inscribe() {
         setEstimateFeeSats(0);
     };
 
-    function handleFileChange(event: any) {
-        const selectedFile = event.target.files[0];
-        if (selectedFile && selectedFile.size <= FILE_MAXSIZE) {
-            setFile(selectedFile);
-            const fileReader = new FileReader();
-            fileReader.onload = () => {
-                setPreviewUrl(fileReader.result?.toString());
-            };
-            fileReader.readAsDataURL(selectedFile);
-            setEstimateFeeSats(0);
-        } else {
-            // dispatch(
-            //     action.setAlertMessage({
-            //         type: ALERT_WARN,
-            //         message: "File size should be less than 400KB",
-            //     })
-            // );
-        }
+    function handleFileSelect(event: any) {
+        const selectedFiles = Array.from(event.target.files);
+        setFiles(selectedFiles);
     }
+
+    function readFile(file: File) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function handleUpload() {
+        const fileContents = await Promise.all(files.map(readFile));
+        const formData = new FormData();
+        fileContents.forEach((content: any, index) => {
+            formData.append(`file${index}`, new Blob([content]), files[index].name);
+        });
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        });
+        console.log(response);
+    }
+
+    // function handleFileChange(event: any) {
+    //     const fileArray = Array.from(event.target.files)
+    //     const filteredFiles = fileArray.filter((item: any) => item && item?.size <= FILE_MAXSIZE)
+    //     setFiles(filteredFiles)
+    //     const _previewUrls: (string | undefined)[];
+    //     for (var index = 0; index < filteredFiles.length; index++) {
+    //         const fileReader = new FileReader();
+    //         fileReader.onload = () => {
+    //             _previewUrls.fileReader.result?.toString()]);
+    //         };
+    //         fileReader.readAsDataURL(filteredFiles[index] as Blob);
+    //     }
+    //     if (filteredFiles.length > 0) {
+    //         setEstimateFeeSats(0);
+    //     }
+
+    //     // const selectedFile = event.target.files[0];
+    //     // if (selectedFile && selectedFile.size <= FILE_MAXSIZE) {
+    //     //     setFile(selectedFile);
+    //     //     const fileReader = new FileReader();
+    //     //     fileReader.onload = () => {
+    //     //         setPreviewUrl(fileReader.result?.toString());
+    //     //     };
+    //     //     fileReader.readAsDataURL(selectedFile);
+    //     //     setEstimateFeeSats(0);
+    //     // } else {
+    //     //     // dispatch(
+    //     //     //     action.setAlertMessage({
+    //     //     //         type: ALERT_WARN,
+    //     //     //         message: "File size should be less than 400KB",
+    //     //     //     })
+    //     //     // );
+    //     // }
+    // }
 
     const handleEstimateInscribe = async (e: any) => {
         e.preventDefault();
@@ -476,6 +520,7 @@ export default function Inscribe() {
                                                     </div>
                                                     <input
                                                         className="position-absolute top-0 end-0 start-0 bottom-0 opacity-0"
+                                                        multiple
                                                         type="file"
                                                         name="upload"
                                                         accept=".apng,.gif,.glb,.jpg,.png,.stl,.svg,.webp"
@@ -483,7 +528,7 @@ export default function Inscribe() {
                                                             pendingInscribe ||
                                                             pendingEstimate
                                                         }
-                                                        onChange={handleFileChange}
+                                                        onChange={handleFileSelect}
                                                     />
                                                 </div>
                                             </div>
@@ -551,21 +596,27 @@ export default function Inscribe() {
                             </div>
                         </div>
                         <div className="col-md-4">
-                            <div className="product-card">
-                                {!previewUrl ? (
-                                    <div className="product-card-media"></div>
-                                ) : (
-                                    <img
-                                        className="rounded-3 w-100 h-100"
-                                        src={previewUrl}
-                                        title=""
-                                        alt=""
-                                    />
-                                )}
-                            </div>
+                            {
+                                files && files.length > 0 && (
+                                    <div className={styles.productCard}>
+                                        <div className='row g-3'>
+                                            {files.map((file, index) => (
+                                                <div className='col-sm-6 col-lg-6' key={index}>
+                                                    <img
+                                                        className={styles.rounded3}
+                                                        src={URL.createObjectURL(file)}
+                                                        alt={file.name}
+                                                        title=""
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            }
                             <br />
                             {estimateFeeSats > 0 && (
-                                <div className="product-card">
+                                <div className={styles.productCard}>
                                     <div className="product-card-body">
                                         <div
                                             style={{
