@@ -38,6 +38,43 @@
   --callout-border-rgb: 172, 175, 176;
   --card-rgb: 180, 185, 188;
   --card-border-rgb: 131, 134, 135;
+  --tg-body-font-family: 'Mabry Pro';
+  --tg-heading-font-family: 'Power Grotesk';
+  --tg-fa-icon-font-family: "Font Awesome 5 Free";
+  --tg-ui-icon-font-family: "Unicons";
+  --tg-body-font-size: 18px;
+  --tg-body-line-height: 1.5;
+  --tg-heading-line-height: 1.2;
+  --tg-common-color-blue: #0d6efd;
+  --tg-common-color-indigo: #6610f2;
+  --tg-common-color-purple: #741ff5;
+  --tg-common-color-pink: #d63384;
+  --tg-common-color-red: #dc3545;
+  --tg-common-color-orange: #fd7e14;
+  --tg-common-color-yellow: #ffc107;
+  --tg-common-color-green: #198754;
+  --tg-common-color-teal: #20c997;
+  --tg-common-color-cyan: #0dcaf0;
+  --tg-common-color-white: #fff;
+  --tg-common-color-gray: #6c757d;
+  --tg-common-color-black: #0F051D;
+  --tg-body-color: #7B7583;
+  --tg-heading-color: #fdfbff;
+  --tg-theme-primary: #741ff5;
+  --tg-theme-secondary: #e348ff;
+  --tg-gradient-1: #2600fc;
+  --tg-gradient-2: #ff00ea;
+  --tg-border-1: #e5e5e5;
+  --tg-border-2: rgba(131, 131, 131, 0.25);
+  --tg-rgba-1: rgba(255, 255, 255, 0.05);
+  --tg-rgba-2: rgba(255, 255, 255, 0.02);
+  --tg-rgba-3: rgba(255, 255, 255, 0.15);
+  --tg-fw-extra-bold: 800;
+  --tg-fw-bold: 700;
+  --tg-fw-semi-bold: 600;
+  --tg-fw-medium: 500;
+  --tg-fw-regular: 400;
+  --tg-fw-light: 300;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -86,13 +123,8 @@ body {
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: #0F051D;
+  color: #f6f6f7;
 }
 
 a {
