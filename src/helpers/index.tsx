@@ -1,4 +1,5 @@
 import axios from "axios";
+import { v4 as uuidv4, validate } from 'uuid';
 import {
   API_PATH,
   SUCCESS,
@@ -43,3 +44,12 @@ export const delay = (ms: number) => {
     setTimeout(resolve, ms);
   });
 };
+
+export const getNewLoginKey = () => {
+  const uniqueId = uuidv4();
+  return uniqueId;
+}
+
+export const validateUID = (uniqueId: any) => {
+  return validate(uniqueId);
+}

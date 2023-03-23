@@ -1,6 +1,6 @@
 /******************************************/
 // Main API
-export const API_PATH = "https://api.ordinalart.app/api";
+export const API_PATH = "http://localhost:3306/api";
 /******************************************/
 
 export function RELEASE(param1: any, param2: any, ...param3:any) {

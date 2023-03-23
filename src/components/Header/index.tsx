@@ -1,9 +1,11 @@
 import Image from 'next/image'
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Header() {
     const [showSubMenu, setShowSubMenu] = useState(false)
     const [showSubMenu2, setShowSubMenu2] = useState(false)
+    const [collectionId, setCollectionId] = useState(0)
     return (
         <>
             <header>
@@ -32,50 +34,32 @@ export default function Header() {
                                         >
                                             <ul id="menu-main" className="navigation">
                                                 <li
+                                                    id="menu-item-29967"
+                                                    className="menu-item menu-item-type-post_type menu-item-object-page menu-item-29967"
+                                                >
+                                                    <Link href='/'>Inscribe</Link>
+                                                </li>
+                                                <li
                                                     id="menu-item-29968"
                                                     className="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-29968"
                                                 >
-                                                    <a href="#">The First 2000</a>
+                                                    <Link href='/collection'>Collection</Link>
                                                     <ul className="sub-menu">
                                                         <li
                                                             id="menu-item-29969"
                                                             className="menu-item menu-item-type-custom menu-item-object-custom menu-item-29969"
                                                         >
-                                                            <a href="inscriptions/index.html"
-                                                            >All Inscriptions</a
-                                                            >
-                                                        </li>
-                                                        <li
-                                                            id="menu-item-29970"
-                                                            className="menu-item menu-item-type-custom menu-item-object-custom menu-item-29970"
-                                                        >
-                                                            <a
-                                                                href="inscriptions/indexab59.html?_sort=like_amount_desc"
-                                                            >Most Liked</a
-                                                            >
+                                                            <Link href={`/collection/${collectionId}`}>
+                                                                {`collection ${collectionId}`}
+                                                            </Link>
                                                         </li>
                                                         <li
                                                             id="menu-item-29971"
                                                             className="menu-item menu-item-type-custom menu-item-object-custom menu-item-29971"
                                                         >
-                                                            <a
-                                                                href="inscriptions/index1e18.html?_cats=one-of-a-kind"
-                                                            >1/1&#8217;s</a
-                                                            >
+                                                            <Link href='/addCollection'>Add Your Collection</Link>
                                                         </li>
                                                     </ul>
-                                                </li>
-                                                <li
-                                                    id="menu-item-29967"
-                                                    className="menu-item menu-item-type-post_type menu-item-object-page menu-item-29967"
-                                                >
-                                                    <a href="collections/index.html">Collections</a>
-                                                </li>
-                                                <li
-                                                    id="menu-item-11679"
-                                                    className="menu-item menu-item-type-custom menu-item-object-custom menu-item-11679"
-                                                >
-                                                    <a href="https://ordinals.com/">Ordinals.com</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -133,31 +117,26 @@ export default function Header() {
                                         <div className="tgmobile__menu-outer">
                                             <ul id="menu-main-1" className="navigation">
                                                 <li
+                                                    className="menu-item menu-item-type-post_type menu-item-object-page menu-item-29967"
+                                                >
+                                                    <a href="collections/index.html">Inscribe</a>
+                                                </li>
+                                                <li
                                                     className="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children has-children menu-item-29968"
                                                 >
-                                                    <a href="#">The First 2000</a>
-                                                    <ul className="sub-menu" style={{display: showSubMenu2 ? 'none' : 'block'}}>
+                                                    <Link href='/collection'>Collection</Link>
+                                                    <ul className="sub-menu" style={{ display: showSubMenu2 ? 'none' : 'block' }}>
                                                         <li
                                                             className="menu-item menu-item-type-custom menu-item-object-custom menu-item-29969"
                                                         >
-                                                            <a href="inscriptions/index.html"
-                                                            >All Inscriptions
-                                                            </a>
-                                                        </li>
-                                                        <li
-                                                            className="menu-item menu-item-type-custom menu-item-object-custom menu-item-29970"
-                                                        >
-                                                            <a
-                                                                href="inscriptions/indexab59.html?_sort=like_amount_desc"
-                                                            >Most Liked
-                                                            </a>
+                                                            <Link href={`/collection/${collectionId}`}>
+                                                                {`collection ${collectionId}`}
+                                                            </Link>
                                                         </li>
                                                         <li
                                                             className="menu-item menu-item-type-custom menu-item-object-custom menu-item-29971"
                                                         >
-                                                            <a
-                                                                href="inscriptions/index1e18.html?_cats=one-of-a-kind"
-                                                            >1/1 s</a>
+                                                            <Link href='/addCollection'>Add Your Collection</Link>
                                                         </li>
                                                     </ul>
                                                     <div className={showSubMenu2 ? "dropdown-btn open" : "dropdown-btn"} onClick={(e) => {
@@ -166,16 +145,6 @@ export default function Header() {
                                                     }}>
                                                         <span className={showSubMenu2 ? "plus-line" : "plus-line plus-line::after"}></span>
                                                     </div>
-                                                </li>
-                                                <li
-                                                    className="menu-item menu-item-type-post_type menu-item-object-page menu-item-29967"
-                                                >
-                                                    <a href="collections/index.html">Collections</a>
-                                                </li>
-                                                <li
-                                                    className="menu-item menu-item-type-custom menu-item-object-custom menu-item-11679"
-                                                >
-                                                    <a href="https://ordinals.com/">Ordinals.com</a>
                                                 </li>
                                             </ul>
                                         </div>

@@ -1,18 +1,16 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Inscribe.module.css'
-import { FILE_MAXSIZE, MAX_FEE_RATE, MIN_FEE_RATE, OUTPUT_UTXO, SERVICE_FEE } from '@/constant'
+import { API_PATH, FILE_MAXSIZE, MAX_FEE_RATE, MIN_FEE_RATE, OUTPUT_UTXO, SERVICE_FEE, SUCCESS, FAIL } from '@/constant'
 import { timeEstimate } from '@/helpers'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getAddressInfo, validate } from 'bitcoin-address-validation'
+import axios from 'axios'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Inscribe() {
-    const [file, setFile] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState<string | null | undefined>(null);
     const [files, setFiles] = useState<any[]>([]);
-    const [previewUrls, setPreviewUrls] = useState<(string | undefined)[]>([]);
     const [pendingInscribe, setPendingInscribe] = useState(false);
     const [pendingEstimate, setPendingEstimate] = useState(false);
     const [estimateFeeSats, setEstimateFeeSats] = useState(0);
@@ -48,7 +46,7 @@ export default function Inscribe() {
                 break;
 
             case "recipientAddress":
-                if (inputValue < 0 || !getAddressInfo(inputValue).bech32) {
+                if (inputValue < 0 || !validate(inputValue) || !getAddressInfo(inputValue).bech32) {
                     terror += 1;
                     message = "Please Input Ord-compatible wallet address!";
                 } else {
@@ -77,7 +75,7 @@ export default function Inscribe() {
             return true;
         });
         if (value.feeRate < MIN_FEE_RATE || value.feeRate > MAX_FEE_RATE) terror += 1;
-        if (value.recipientAddress.length === 0 || !getAddressInfo(value.recipientAddress).bech32) terror += 1;
+        if (value.recipientAddress.length === 0 || !validate(value.recipientAddress) || !getAddressInfo(value.recipientAddress).bech32) terror += 1;
         if (terror > 0) {
             return false;
         } else {
@@ -94,7 +92,14 @@ export default function Inscribe() {
 
     function handleFileSelect(event: any) {
         const selectedFiles = Array.from(event.target.files);
-        setFiles(selectedFiles);
+        const filteredFiiles = selectedFiles.filter((item: any) => item && item?.size <= FILE_MAXSIZE)
+        if (selectedFiles.length !== filteredFiiles.length) {
+            // TODO alert
+        }
+        // console.log('selectedFiles', selectedFiles)
+        // console.log('filteredFiiles', filteredFiiles)
+        // setFiles(selectedFiles);
+        setFiles(filteredFiiles);
     }
 
     function readFile(file: File) {
@@ -106,18 +111,13 @@ export default function Inscribe() {
         });
     }
 
-    async function handleUpload() {
-        const fileContents = await Promise.all(files.map(readFile));
+    const handleUpload = async () => {
         const formData = new FormData();
-        fileContents.forEach((content: any, index) => {
-            formData.append(`file${index}`, new Blob([content]), files[index].name);
+        files.forEach((file) => {
+            formData.append('files', file);
         });
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData,
-        });
-        console.log(response);
-    }
+        await axios.post(`${API_PATH}/upload`, formData);
+    };
 
     // function handleFileChange(event: any) {
     //     const fileArray = Array.from(event.target.files)
@@ -156,78 +156,67 @@ export default function Inscribe() {
 
     const handleEstimateInscribe = async (e: any) => {
         e.preventDefault();
-        // if (pendingInscribe || pendingEstimate || pendingApprove) {
-        //     dispatch(
-        //         action.setAlertMessage({
-        //             type: ALERT_WARN,
-        //             message: `Pending... Please wait until few seconds!`,
-        //         })
-        //     );
-        //     return;
-        // }
+        if (pendingInscribe || pendingEstimate) {
+            // dispatch(
+            //     action.setAlertMessage({
+            //         type: ALERT_WARN,
+            //         message: `Pending... Please wait until few seconds!`,
+            //     })
+            // );
+            return;
+        }
 
-        // if (checkAllValidation() && file) {
-        //     setPendingEstimate(true);
-        //     const formData = new FormData();
-        //     formData.append("file", file);
-        //     formData.append("feeRate", value.feeRate);
-        //     formData.append(
-        //         "btcAccount",
-        //         userDepositAddressInfo.depositAddress
-        //             ? userDepositAddressInfo.depositAddress
-        //             : BECH32_EXAMPLE
-        //     );
-        //     try {
-        //         const response = await axios.post(
-        //             `${API_PATH}/users/estimateInscribe`,
-        //             formData
-        //         );
-        //         console.log(response.data);
-        //         if (response.data.status === SUCCESS) {
-        //             const _estimateFeeToken = getTokenAmountFromWei(
-        //                 value.tokenAddress,
-        //                 await getTokenWeiAmount(
-        //                     value.tokenAddress,
-        //                     parseInt(response.data.result) + OUTPUT_UTXO + SERVICE_FEE
-        //                 )
-        //             );
-        //             setEstimateFeeAsToken(_estimateFeeToken);
-        //             setEstimateFeeSats(response.data.result);
-        //         } else {
-        //             dispatch(
-        //                 action.setAlertMessage({
-        //                     type: ALERT_ERROR,
-        //                     message: "Estimate Fail. Please try again.",
-        //                 })
-        //             );
-        //         }
-        //     } catch (error) {
-        //         console.error(error);
-        //         dispatch(
-        //             action.setAlertMessage({
-        //                 type: ALERT_ERROR,
-        //                 message: `Something went wrong!  errCode: ${error}`,
-        //             })
-        //         );
-        //     }
-        //     setPendingEstimate(false);
-        // } else {
-        //     if (!checkAllValidation()) {
-        //         dispatch(
-        //             action.setAlertMessage({
-        //                 type: ALERT_WARN,
-        //                 message: "Please fill the input data correctly.",
-        //             })
-        //         );
-        //     } else if (!file) {
-        //         dispatch(
-        //             action.setAlertMessage({
-        //                 type: ALERT_WARN,
-        //                 message: "Please select your artifact.",
-        //             })
-        //         );
-        //     }
-        // }
+        if (checkAllValidation() && files.length > 0) {
+            setPendingEstimate(true);
+            const formData = new FormData();
+            files.forEach((file) => {
+                formData.append('files', file);
+            });
+            formData.append("feeRate", value.feeRate.toString());
+            formData.append("btcAccount", value.recipientAddress);
+            try {
+                const response = await axios.post(
+                    `${API_PATH}/users/estimateInscribe`,
+                    formData
+                );
+                console.log(response.data);
+                if (response.data.status === SUCCESS) {
+                    setEstimateFeeSats(response.data.result);
+                } else {
+                    // dispatch(
+                    //     action.setAlertMessage({
+                    //         type: ALERT_ERROR,
+                    //         message: "Estimate Fail. Please try again.",
+                    //     })
+                    // );
+                }
+            } catch (error) {
+                console.error(error);
+                // dispatch(
+                //     action.setAlertMessage({
+                //         type: ALERT_ERROR,
+                //         message: `Something went wrong!  errCode: ${error}`,
+                //     })
+                // );
+            }
+            setPendingEstimate(false);
+        } else {
+            if (!checkAllValidation()) {
+                // dispatch(
+                //     action.setAlertMessage({
+                //         type: ALERT_WARN,
+                //         message: "Please fill the input data correctly.",
+                //     })
+                // );
+            } else if (files.length <= 0) {
+                // dispatch(
+                //     action.setAlertMessage({
+                //         type: ALERT_WARN,
+                //         message: "Please select your artifact.",
+                //     })
+                // );
+            }
+        }
     };
 
     const handleInscribeNow = async (e: any) => {
@@ -534,6 +523,24 @@ export default function Inscribe() {
                                             </div>
 
                                             <div className="col-12">
+                                                <label className="form-label">Recipient Address</label>
+                                                <input
+                                                    type="string"
+                                                    name="recipientAddress"
+                                                    className="form-control"
+                                                    disabled={
+                                                        pendingInscribe || pendingEstimate
+                                                    }
+                                                    placeholder="Enter recipient address"
+                                                    onChange={onChangeInput}
+                                                />
+                                                <div>
+                                                    <span className="help-text fs-sm">
+                                                        {error['recipientAddress']}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="col-12">
                                                 <label className="form-label">Fee Rate</label>
                                                 <input
                                                     type="number"
@@ -547,6 +554,11 @@ export default function Inscribe() {
                                                     placeholder="Enter fee rate"
                                                     onChange={onChangeInput}
                                                 />
+                                                <div>
+                                                    <span className="help-text fs-sm">
+                                                        {error['feeRate']}
+                                                    </span>
+                                                </div>
                                                 <div>
                                                     <span className="help-text fs-sm">
                                                         {`Range: ${MIN_FEE_RATE}~${MAX_FEE_RATE} sats/vB. Suggested: 15~25 sats/vB. Default: 15 sats/vB`}
